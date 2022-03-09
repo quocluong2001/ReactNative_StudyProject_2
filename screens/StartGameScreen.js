@@ -1,9 +1,7 @@
 import { React, useState } from "react";
 import {
     View,
-    Text,
     StyleSheet,
-    Button,
     TouchableWithoutFeedback,
     Keyboard,
     Alert
@@ -13,6 +11,9 @@ import Card from '../components/Card'
 import Theme from "../Constants/Theme";
 import Input from "../components/Input";
 import NumberContainer from "../components/NumberContainer";
+import TitleText from "../components/TitleText";
+import BodyText from "../components/BodyText";
+import MainButton from "../components/MainButton";
 
 const StartGameScreen = props => {
     const [enteredValue, setEnteredValue] = useState('')
@@ -24,9 +25,15 @@ const StartGameScreen = props => {
     if (confirmed) {
         confirmedOutput = (
             <Card style={styles.summaryContainer}>
-                <Text>You have selected</Text>
+                <TitleText>You have selected</TitleText>
                 <NumberContainer>{selectedNumber}</NumberContainer>
-                <Button title="START GAME"></Button>
+                <MainButton
+                    onPress={() => props.onStartGame(selectedNumber)}
+                    buttonTextStyle={styles.buttonText}
+                    buttonStyle={styles.startGameButton}
+                >
+                    START GAME
+                </MainButton>
             </Card>
         )
     }
@@ -55,16 +62,15 @@ const StartGameScreen = props => {
         setConfirmed(true)
         setSelectedNumber(number)
         Keyboard.dismiss()
-        // resetInputHandler('')
     }
 
 
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={styles.screen}>
-                <Text style={styles.title}> Start a New Game! </Text>
+                <TitleText style={{marginVertical: 10}}>Start a New Game!</TitleText>
                 <Card style={styles.inputContainer}>
-                    <Text> Enter a Number </Text>
+                    <BodyText>Enter a Number</BodyText>
                     <Input style={styles.input}
                         blurOnSummit autoCorrect={false}
                         autoCapitalize='none'
@@ -74,20 +80,18 @@ const StartGameScreen = props => {
                         value={enteredValue}
                     />
                     <View style={styles.buttonContainer}>
-                        <View style={styles.button}>
-                            <Button
-                                color={Theme.color2}
-                                title="Reset"
-                                onPress={resetInputHandler}
-                            />
-                        </View>
-                        <View style={styles.button}>
-                            <Button
-                                color={Theme.color1}
-                                title="Confirm"
-                                onPress={confirmInputHandler}
-                            />
-                        </View>
+                        <MainButton
+                            onPress={resetInputHandler}
+                            buttonStyle={styles.resetButton}
+                            buttonTextStyle={styles.buttonText}
+                        >Reset
+                        </MainButton>
+                        <MainButton
+                            onPress={confirmInputHandler}
+                            buttonStyle={styles.confirmButton}
+                            buttonTextStyle={styles.buttonText}
+                        >Confirm
+                        </MainButton>
                     </View>
                 </Card>
                 {confirmedOutput}
@@ -100,18 +104,13 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         padding: 10,
-        alignItems: "center"
-    },
-
-    title: {
-        fontSize: 20,
-        marginVertical: 10
+        alignItems: "center",
     },
 
     inputContainer: {
-        width: 500,
-        maxWidth: '80%',
+        maxWidth: '75%',
         alignItems: 'center',
+        justifyContent: "center",
         backgroundColor: Theme.color4,
         padding: 15,
     },
@@ -119,13 +118,10 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: "row",
         width: '100%',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        paddingHorizontal: 10,
         marginTop: 10
-    },
-
-    button: {
-        width: '35%'
     },
 
     input: {
@@ -134,11 +130,31 @@ const styles = StyleSheet.create({
     },
 
     summaryContainer: {
-        width: 150,
-        backgroundColor: Theme.color4,
+        width: 200,
         marginVertical: 20,
         alignItems: "center",
         padding: 10
+    },
+
+    buttonText: {
+        color: Theme.color4
+    },
+
+    startGameButton: {
+        backgroundColor: Theme.color2,
+        borderRadius: 20
+    },
+
+    resetButton: {
+        backgroundColor: Theme.color1,
+        borderRadius: 20,
+        width: 94
+    },
+
+    confirmButton: {
+        backgroundColor: Theme.color2,
+        borderRadius: 20,
+        width: 94
     }
 })
 

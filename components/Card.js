@@ -1,6 +1,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
+import Theme from "../Constants/Theme";
+
 const Card = props => {
     return (
         <View style={{ ...styles.card, ...props.style }}>{props.children}</View>
@@ -9,6 +11,9 @@ const Card = props => {
 
 const styles = StyleSheet.create({
     card: {
+        backgroundColor: Theme.color4,
+        padding: 20,
+
         //! IOS ONLY
         shadowColor: 'black',
         shadowOffset: { width: 0, height: 2 },
@@ -16,8 +21,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         
         //! ANDROID ONLY
-        elevation: 50,
-        borderRadius: 15,
+        elevation: 10,
+        borderRadius: 10,
     }
 })
 

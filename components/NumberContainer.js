@@ -5,7 +5,7 @@ import Theme from "../Constants/Theme";
 
 const NumberContainer = props => {
     return (
-        <View style={styles.container}>
+        <View style={{...styles.container, ...props.style}}>
             <Text style={styles.number}>{props.children}</Text>
         </View>
     )
@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         padding: 8,
-        marginVertical: 10
     },
 
     number: {
