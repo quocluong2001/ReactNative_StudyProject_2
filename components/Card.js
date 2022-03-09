@@ -5,7 +5,12 @@ import Theme from "../Constants/Theme";
 
 const Card = props => {
     return (
-        <View style={{ ...styles.card, ...props.style }}>{props.children}</View>
+        <View
+            {...props}
+            style={{ ...styles.card, ...props.style }}
+        >
+            {props.children}
+        </View>
     )
 }
 
@@ -19,7 +24,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 5,
-        
+
         //! ANDROID ONLY
         elevation: 10,
         borderRadius: 10,

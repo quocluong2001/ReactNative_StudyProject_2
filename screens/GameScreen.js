@@ -1,11 +1,13 @@
 import { React, useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, FlatList } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
 
 import NumberContainer from "../components/NumberContainer";
 import Card from "../components/Card";
 import TitleText from "../components/TitleText";
 import MainButton from "../components/MainButton";
 import Theme from "../Constants/Theme";
+import BodyText from "../components/BodyText";
 
 const generateRandomNumberBtw = (min, max, exclude) => {
     min = Math.ceil(min)
@@ -18,11 +20,9 @@ const generateRandomNumberBtw = (min, max, exclude) => {
 }
 
 const GameScreen = props => {
-    const [guessNum, setGuessNum] = useState(
-        generateRandomNumberBtw(1, 100, props.userNum)
-    )
-    const [rounds, setRounds] = useState(0)
-
+    const generateInitial = generateRandomNumberBtw(1, 100, props.userNum)
+    const [guessNum, setGuessNum] = useState(generateInitial)
+    const [pastGuess, setPastGuess] = useState([generateInitial.toString()])
     const currentLow = useRef(1)
     const currenHigh = useRef(100)
 
@@ -30,7 +30,7 @@ const GameScreen = props => {
 
     useEffect(() => {
         if (guessNum === props.userNum) {
-            props.onGameOver(rounds)
+            props.onGameOver(pastGuess.length)
         }
     }, [guessNum, userNum, onGameOver])
 
@@ -56,27 +56,46 @@ const GameScreen = props => {
             guessNum
         )
         setGuessNum(nextNum)
-        setRounds(rounds + 1)
+        setPastGuess([nextNum.toString(), ...pastGuess])
+    }
+
+    const renderListItem = (listLength, itemData) => {
+        return (
+            <View style={styles.listItem}>
+                <BodyText>#{listLength - itemData.index}</BodyText>
+                <BodyText>{itemData.item}</BodyText>
+            </View>
+        )
     }
 
     return (
         <View style={styles.screen}>
             <TitleText>Computer's Guess</TitleText>
-            <NumberContainer>{guessNum}</NumberContainer>
+            <NumberContainer style={{ marginVertical: 10 }}>{guessNum}</NumberContainer>
             <Card style={styles.buttonContainer}>
                 <MainButton
                     onPress={() => nextGuessHandler('lower')}
                     buttonStyle={styles.lowerButton}
-                    buttonTextStyle={{color: 'white'}}>
-                    LOWER
+                    buttonTextStyle={{ color: 'white' }}
+                >
+                    <Ionicons name="remove" size={24} color="white" />
                 </MainButton>
                 <MainButton
                     onPress={() => nextGuessHandler('greater')}
                     buttonStyle={styles.greaterButton}
-                    buttonTextStyle={{color: 'white'}}>
-                    GREATER
+                    buttonTextStyle={{ color: 'white' }}
+                >
+                    <Ionicons name="add" size={24} color='white' />
                 </MainButton>
             </Card>
+            <View style={styles.listContainer}>
+                <FlatList
+                    contentContainerStyle={styles.list}
+                    data={pastGuess}
+                    renderItem={itemData => renderListItem(pastGuess.length, itemData)}
+                    keyExtractor={(itemData) => itemData}
+                />
+            </View>
         </View>
     )
 }
@@ -92,7 +111,6 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: "row",
         justifyContent: "space-around",
-        marginTop: 10,
         width: 270,
         maxWidth: '80%',
     },
@@ -105,7 +123,28 @@ const styles = StyleSheet.create({
     greaterButton: {
         backgroundColor: Theme.color2,
         borderRadius: 20,
-    }
+    },
+
+    listContainer: {
+        flex: 1,
+        width: '60%'
+    },
+
+    list: {
+        flexGrow: 1,
+        // alignItems: "center",
+        justifyContent: "flex-end"
+    },
+
+    listItem: {
+        flexDirection: "row",
+        borderWidth: 1,
+        borderColor: Theme.color1,
+        marginVertical: 10,
+        padding: 10,
+        justifyContent: "space-between",
+        width: '100%'
+    },
 })
 
 export default GameScreen
