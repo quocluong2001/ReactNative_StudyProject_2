@@ -1,5 +1,5 @@
 import { React, useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Alert, FlatList } from "react-native";
+import { View, StyleSheet, Alert, FlatList, useWindowDimensions } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
 import NumberContainer from "../components/NumberContainer";
@@ -29,8 +29,8 @@ const GameScreen = props => {
     const { userNum, onGameOver } = props
 
     useEffect(() => {
-        if (guessNum === props.userNum) {
-            props.onGameOver(pastGuess.length)
+        if (guessNum === userNum) {
+            onGameOver(pastGuess.length)
         }
     }, [guessNum, userNum, onGameOver])
 
@@ -48,7 +48,7 @@ const GameScreen = props => {
             currenHigh.current = guessNum
         }
         else {
-            currentLow.current = guessNum
+            currentLow.current = guessNum + 1
         }
         const nextNum = generateRandomNumberBtw(
             currentLow.current,
@@ -67,6 +67,52 @@ const GameScreen = props => {
             </View>
         )
     }
+
+    //! Responsive
+    const windowLayout = {
+        width: useWindowDimensions().width,
+        height: useWindowDimensions().height,
+    }
+
+    const listContainerStyle = {
+        ...styles.listContainer,
+        width: windowLayout.width >= 320 ? '60%' : '80%',
+    }
+
+    if (windowLayout.width > 500) {
+        return (
+            <View style={styles.screen}>
+                <TitleText>Computer's Guess</TitleText>
+                <View style={styles.buttonContainerLandscape}>
+                    <MainButton
+                        onPress={() => nextGuessHandler('lower')}
+                        buttonStyle={styles.lowerButton}
+                        buttonTextStyle={{ color: 'white' }}
+                    >
+                        <Ionicons name="remove" size={24} color="white" />
+                    </MainButton>
+                    <NumberContainer style={{ marginVertical: 10 }}>{guessNum}</NumberContainer>
+                    <MainButton
+                        onPress={() => nextGuessHandler('greater')}
+                        buttonStyle={styles.greaterButton}
+                        buttonTextStyle={{ color: 'white' }}
+                    >
+                        <Ionicons name="add" size={24} color='white' />
+                    </MainButton>
+                </View>
+                <View style={listContainerStyle}>
+                    <FlatList
+                        contentContainerStyle={styles.list}
+                        data={pastGuess}
+                        renderItem={itemData => renderListItem(pastGuess.length, itemData)}
+                        keyExtractor={(itemData) => itemData}
+                    />
+                </View>
+            </View>
+        )
+    }
+
+    //! Responsive end
 
     return (
         <View style={styles.screen}>
@@ -88,7 +134,7 @@ const GameScreen = props => {
                     <Ionicons name="add" size={24} color='white' />
                 </MainButton>
             </Card>
-            <View style={styles.listContainer}>
+            <View style={listContainerStyle}>
                 <FlatList
                     contentContainerStyle={styles.list}
                     data={pastGuess}
@@ -115,6 +161,13 @@ const styles = StyleSheet.create({
         maxWidth: '80%',
     },
 
+    buttonContainerLandscape: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        width: '80%'
+    },
+
     lowerButton: {
         backgroundColor: Theme.color1,
         borderRadius: 20,
@@ -127,7 +180,6 @@ const styles = StyleSheet.create({
 
     listContainer: {
         flex: 1,
-        width: '60%'
     },
 
     list: {
